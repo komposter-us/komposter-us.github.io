@@ -32,11 +32,6 @@ button {
     transition: all 0.2s ease-in;
 }
 
-p,
-h1 {
-    color: #efefef;
-}
-
 a {
     text-decoration: none;
     color: #38fedb;
@@ -52,6 +47,7 @@ a {
 
 .p-text {
     margin-bottom: 0;
+    color: #efefef;
 }
 
 .round-container {
