@@ -48,10 +48,10 @@ btnRound.addEventListener("click", function () {
     updateRoundCards();
 });
 
-/* const btnRestart = document.querySelector(".btn-restart");
+const btnRestart = document.querySelector(".btn-restart");
 btnRestart.addEventListener("click", function () {
     document.location.reload();
-}); */
+});
 
 /*
 |--------------------------------------------------------------------------

@@ -29,6 +29,7 @@ footer {
 
 button {
     @extend %bootstrap-border;
+    transition: all 0.2s ease-in;
 }
 
 p,
@@ -56,6 +57,12 @@ a {
 .round-container {
     text-align: center;
     padding-bottom: 2em;
+    position: relative;
+}
+
+
+.round-control {
+    position: relative;
 }
 
 $btn-round-sze: 80px;
@@ -75,6 +82,22 @@ $btn-round-sze: 80px;
         font-size: 2em;
         font-weight: bold;
         line-height: 100%;
+    }
+}
+
+$btn-restart-size: 32px;
+
+.btn-restart {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: url("../img/update-arrows.png");
+    width: $btn-restart-size;
+    height: $btn-restart-size;
+    opacity: .6;
+
+    &:hover {
+        opacity: 1;
     }
 }
 
