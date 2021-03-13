@@ -19,7 +19,8 @@
             ".card-round",
             ".card-status",
             ".btn-status",
-            ".btn-close"
+            ".btn-close",
+            ".btn-round-text"
         ]
     },
     "repository": {

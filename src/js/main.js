@@ -39,18 +39,19 @@ const lang = window.navigator.language.slice(0, 2) === "ru" ? "ru" : "en";
 let round = 1;
 
 const btnRound = document.querySelector(".btn-round");
-btnRound.innerHTML = phrases[lang].misc[Misc.Round];
-const btnText = document.querySelector(".round-text");
+const btnText = document.querySelector(".btn-round-num");
+const btnRoundText = document.querySelector(".btn-round-text");
+btnRoundText.textContent = phrases[lang].misc[Misc.Round];
 
 btnRound.addEventListener("click", function () {
     btnText.textContent = ++round;
     updateRoundCards();
 });
 
-const btnRestart = document.querySelector(".btn-restart");
+/* const btnRestart = document.querySelector(".btn-restart");
 btnRestart.addEventListener("click", function () {
     document.location.reload();
-});
+}); */
 
 /*
 |--------------------------------------------------------------------------
@@ -70,7 +71,7 @@ function createCards() {
         const cardStatus = document.createElement("div");
         cardStatus.classList.add("card-status");
 
-        for (let j = 1; j < phrases[lang].statusFull.length; j++) {
+        for (let j = 0; j < phrases[lang].statusFull.length; j++) {
             const btn = document.createElement("button");
             btn.classList.add("btn-status");
             btn.dataset.status = j;
