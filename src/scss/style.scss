@@ -5,6 +5,7 @@ body {
     background: url("../img/bg.jpg") no-repeat center center fixed;
     background-size: cover;
 
+    // overlay
     &:before {
         content: '';
         position: absolute;
@@ -35,8 +36,14 @@ footer {
     text-align: center;
 }
 
+%bootstrap-border {
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+}
+
 button {
-    border: none;
+    @extend %bootstrap-border;
 }
 
 p,
@@ -66,42 +73,58 @@ a {
     padding-bottom: 24px;
 }
 
+.btn-round {
+    margin-right: 1em;
+}
+
+$card-size: 200px;
+$card-round: 24px;
+
 .card-containter {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-$card-size: 200px;
-
 .card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 12px;
+    padding: 1.5em 0.75em 0.75em 0.75em;
     width: $card-size;
-    // height: $card-size;
-    margin: 4px;
+    margin: 0.5em;
     user-select: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-close {
+    position: absolute;
+    top: 0.25em;
+    right: 0.25em;
+    bottom: 0;
+    opacity: .25;
+    // padding: 0.25em;
+    box-sizing: border-box;
 }
 
 .card-rounds {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding-bottom: 8px;
+    padding-bottom: 0.5em;
 }
-
-$card-round: 24px;
 
 .card-round {
     width: $card-round;
     height: $card-round;
     line-height: $card-round;
-    margin: 4px;
+    margin: 0.25em;
     background: white;
     text-align: center;
-    border: black 1px solid;
+    @extend %bootstrap-border;
 }
 
 //.card-status {}
@@ -109,7 +132,7 @@ $card-round: 24px;
 .btn-status {
     width: 100%;
     text-align: left;
-    margin-bottom: 4px;
+    margin-bottom: 0.25em;
     cursor: pointer;
 
     &:last-child {

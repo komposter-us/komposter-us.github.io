@@ -5,8 +5,7 @@
         "node": true
     },
     "globals": {
-        "window": true,
-        "ActiveXObject": true
+        "window": true
     },
     "extends": [
         "eslint:recommended",

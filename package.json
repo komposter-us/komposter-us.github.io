@@ -13,11 +13,13 @@
         "sass": 0,
         "js": 1,
         "uncss": [
+            ".hidden",
             ".card",
             ".card-rounds",
             ".card-round",
             ".card-status",
-            ".btn-status"
+            ".btn-status",
+            ".btn-close"
         ]
     },
     "repository": {
@@ -94,7 +96,6 @@
         "vinyl-source-stream": "^2.0.0"
     },
     "dependencies": {
-        "@raz1el/util": "^1.0.6",
-        "js-cookie": "^2.2.1"
+        "@raz1el/util": "^1.0.6"
     }
 }
