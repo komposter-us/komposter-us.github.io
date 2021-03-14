@@ -3,6 +3,5 @@
 **/*.log
 **/*.spec.js
 **/*.test.js
-dist
 node_modules
 package-lock.json
