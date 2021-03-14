@@ -175,14 +175,17 @@ function sassCallback(config) {
 
     stream = stream.pipe(postcss([autoprefixer(), cssvariables({
         preserve: true
-    }), calc()]))
-        .pipe(concat(config.outFileName));
+    }), calc()])).pipe(concat(config.outFileName));
 
     if (pkg.gulp.uncss.enable)
         stream = stream.pipe(uncss({
             html: [config.htmlPath],
             ignore: pkg.gulp.uncss.ignore
         }));
+
+    if (config.production)
+        return stream.pipe(cleanCSS())
+            .pipe(gulp.dest(config.outPath));
 
     return stream.pipe(gulp.dest(config.outPath))
         .pipe(rename((path) => {
