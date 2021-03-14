@@ -1,6 +1,6 @@
 {
     "name": "komposter-io",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -14,16 +14,10 @@
     "gulp": {
         "sass": 0,
         "js": 1,
-        "uncss": [
-            ".hidden",
-            ".card",
-            ".card-rounds",
-            ".card-round",
-            ".card-status",
-            ".btn-status",
-            ".btn-close",
-            ".btn-round-text"
-        ]
+        "uncss": {
+            "enable": false,
+            "ignore": []
+        }
     },
     "repository": {
         "type": "git",

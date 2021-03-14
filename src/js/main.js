@@ -9,7 +9,9 @@ const AliveStatus = {
     Defended: 1,
     Suspect: 2,
     Crewmate: 3,
-    Imposter: 4
+    Imposter: 4,
+    Killed: 5,
+    Ejected: 6
 };
 // indexes in phrases[lang].misc
 const Misc = {
@@ -19,18 +21,19 @@ const Misc = {
 const phrases = {
     "ru": {
         misc: ["Раунд"],
-        statusShort: ["?", "К", "Ч", "М", "И", "У"],
-        statusFull: ["Неизвестный", "Красный", "Черный", "Мирный", "Импостер", "Убит"]
+        statusShort: ["?", "К", "Ч", "М", "И", "У", "В"],
+        statusFull: ["Неизвестный", "Красный", "Черный", "Мирный", "Импостер", "Убит", "Выброшен"]
     },
     "en": {
         misc: ["Round"],
-        statusShort: ["?", "D", "S", "C", "I", "D"],
-        statusFull: ["Unknown", "Defended", "Suspect", "Crewmate", "Imposter", "Dead"]
+        statusShort: ["?", "D", "S", "C", "I", "K", "E"],
+        statusFull: ["Unknown", "Defended", "Suspect", "Crewmate", "Impostor", "Killed", "Ejected"]
     }
 };
 
 const crewmateColor = ["#C51111", "#132ED1", "#117F2D", "#ED54BA", "#EF7D0E", "#F6F658", "#3F474E", "#D6E0F0", "#6B31BC", "#71491E", "#38FEDB", "#50EF39"];
 const lang = window.navigator.language.slice(0, 2) === "ru" ? "ru" : "en";
+const getCssOverlayClass = (aliveStatus) => "overlay-" + phrases.en.statusFull[aliveStatus].toLowerCase();
 /*
 |--------------------------------------------------------------------------
 | Round Control
@@ -71,18 +74,16 @@ function createCards() {
         const cardStatus = document.createElement("div");
         cardStatus.classList.add("card-status");
 
-        for (let j = 0; j < phrases[lang].statusFull.length; j++) {
+        for (let aliveStatus = 0; aliveStatus < phrases[lang].statusFull.length; aliveStatus++) {
             const btn = document.createElement("button");
             btn.classList.add("btn-status");
-            btn.dataset.status = j;
-            btn.append(document.createTextNode(phrases[lang].statusFull[j]));
+            btn.append(document.createTextNode(phrases[lang].statusFull[aliveStatus]));
             cardStatus.append(btn);
-            btn.addEventListener("click", btnStatusCallback);
+            btn.addEventListener("click", btnStatusCallback.bind(btn, i, aliveStatus));
         }
 
         const card = document.createElement("div");
         card.classList.add("card");
-        card.dataset.card = i;
         card.style.backgroundColor = color;
 
         const btn = document.createElement("button");
@@ -107,35 +108,49 @@ function closeCard() {
 |--------------------------------------------------------------------------
 */
 /** @this {HTMLButtonElement} */
-function btnStatusCallback() {
+function btnStatusCallback(cardNum, aliveStatus) {
     /** @type {HTMLDivElement} */
     const card = this.parentElement.parentElement;
     /** @type {HTMLDivElement} */
     const cardRounds = card.querySelector(".card-rounds");
     const statusCount = cardRounds.querySelectorAll("*").length;
 
-    console.log(`Card: ${card.dataset.card}, status: ${this.dataset.status}, statusCount: ${statusCount}`);
+    console.log(`Card: ${cardNum}, status: ${aliveStatus}, statusCount: ${statusCount}`);
 
-    if (statusCount < round) {
-        createRoundCard(cardRounds, this.dataset.status);
-    }
-    else {
-        cardRounds.lastElementChild.innerHTML = phrases[lang].statusShort[this.dataset.status];
+    if (statusCount < round)
+        createRoundCard(cardRounds, aliveStatus);
+    else
+        updateRoundCardStatus(cardRounds.lastElementChild, aliveStatus);
+
+    if (aliveStatus > AliveStatus.Suspect) {
+        card.classList.add(getCssOverlayClass(aliveStatus));
+        card.querySelector(".btn-close").classList.add("btn-close-white");
     }
 }
 
 function createRoundCard(rootElem, aliveStatus) {
     const elem = document.createElement("div");
     elem.classList.add("card-round");
-    //  elem.append(document.createTextNode(round.toString()));
-    elem.innerHTML = phrases[lang].statusShort[aliveStatus];
+    elem.dataset.status = aliveStatus;
+    updateRoundCardStatus(elem, aliveStatus);
     rootElem.append(elem);
 }
 
+function updateRoundCardStatus(elem, aliveStatus) {
+    elem.innerHTML = phrases[lang].statusShort[aliveStatus];
+    elem.dataset.status = aliveStatus;
+    console.log(elem);
+}
+
 function updateRoundCards() {
+    /** @type {HTMLDivElement[]} */
     const cards = document.querySelectorAll(".card-rounds");
-    console.log(cards);
+
     for (const card of cards) {
+        // console.log(card.lastElementChild, card.lastElementChild.dataset.status);
+        if (card.lastElementChild.dataset.status > AliveStatus.Suspect)
+            continue;
+
         if (card.querySelectorAll("*").length < round)
             createRoundCard(card, AliveStatus.Unknown);
     }

@@ -55,7 +55,10 @@ const pkg = JSON.parse(require("fs").readFileSync("./package.json", { encoding: 
     "sass": 1,
     "js": 1,
     // Список css классов (используются для js), которые игнорируются uncss
-    "uncss": [".hidden"]
+    "uncss": {
+        enable: true,
+        ignore: [".hidden"]
+    }
 },
 */
 const SASS_COMPILE_TYPE = {
@@ -161,34 +164,27 @@ function sassBuild(production, sassCompileType) {
 }
 
 function sassCallback(config) {
-    if (config.production) {
-        return gulp.src(config.srcPath)
-            .pipe(sass({}).on("error", sass.logError))
-            .pipe(postcss([autoprefixer(), cssvariables({
-                preserve: true
-            }), calc()]))
-            .pipe(concat(config.outFileName))
-            .pipe(uncss({
-                html: [config.htmlPath],
-                ignore: pkg.gulp.uncss
-            }))
-            .pipe(cleanCSS())
-            .pipe(gulp.dest(config.outPath));
-    }
-    return gulp.src(config.srcPath)
-        .pipe(sourcemaps.init())
-        .pipe(sass({
+    let stream = gulp.src(config.srcPath);
+
+    if (config.production)
+        stream = stream.pipe(sass({}).on("error", sass.logError));
+    else
+        stream = stream.pipe(sourcemaps.init()).pipe(sass({
             outputStyle: "expanded"
-        }).on("error", sass.logError))
-        .pipe(postcss([autoprefixer(), cssvariables({
-            preserve: true
-        }), calc()]))
-        .pipe(concat(config.outFileName))
-        .pipe(uncss({
+        }).on("error", sass.logError));
+
+    stream = stream.pipe(postcss([autoprefixer(), cssvariables({
+        preserve: true
+    }), calc()]))
+        .pipe(concat(config.outFileName));
+
+    if (pkg.gulp.uncss.enable)
+        stream = stream.pipe(uncss({
             html: [config.htmlPath],
-            ignore: pkg.gulp.uncss
-        }))
-        .pipe(gulp.dest(config.outPath))
+            ignore: pkg.gulp.uncss.ignore
+        }));
+
+    return stream.pipe(gulp.dest(config.outPath))
         .pipe(rename((path) => {
             path.basename += ".min";
         }))

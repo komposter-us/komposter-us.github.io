@@ -27,9 +27,10 @@ footer {
     border-radius: .25rem;
 }
 
-button {
+.btn-status {
     @extend %bootstrap-border;
-    transition: all 0.2s ease-in;
+    transition: 0.2s ease-in;
+    //background-color: #efefef;
 }
 
 a {
@@ -50,25 +51,42 @@ a {
     color: #efefef;
 }
 
+.hidden {
+    display: none !important;
+}
+
+@keyframes anim-in {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Control
+|--------------------------------------------------------------------------
+*/
 .round-container {
     text-align: center;
     padding-bottom: 2em;
     position: relative;
 }
 
-
-.round-control {
-    position: relative;
-}
-
-$btn-round-sze: 80px;
+$btn-round-sze: 86px;
 
 .btn-round {
     border-radius: 50%;
     width: $btn-round-sze;
     height: $btn-round-sze;
+    border: 6px rgb(122, 31, 40) solid;
     background-color: #dc3545;
     color: #efefef;
+    transition: 0.2s ease-in;
 
     &:hover {
         background-color: #c82333;
@@ -91,12 +109,19 @@ $btn-restart-size: 32px;
     width: $btn-restart-size;
     height: $btn-restart-size;
     opacity: .6;
+    border: none;
+    transition: 0.2s ease-in;
 
     &:hover {
         opacity: 1;
     }
 }
 
+/*
+|--------------------------------------------------------------------------
+| Card
+|--------------------------------------------------------------------------
+*/
 $card-size: 200px;
 $card-round: 24px;
 
@@ -114,10 +139,53 @@ $card-round: 24px;
     width: $card-size;
     margin: 0.5em;
     user-select: none;
+    animation: .5s anim-in ease-in;
 }
 
-.hidden {
-    display: none;
+%overlay {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: .25rem;
+    animation: .2s anim-in ease-in;
+}
+
+$overlay-opacity: .7;
+
+.overlay-killed {
+    &::before {
+        @extend %overlay;
+        background: url("../img/killed.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+        /*         border: 1px red solid;
+        box-sizing: content-box;
+        background-clip: border-box; */
+    }
+}
+
+.overlay-ejected {
+    &::before {
+        @extend %overlay;
+        background: url("../img/ejected.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
+}
+
+.overlay-impostor {
+    &::before {
+        @extend %overlay;
+        background: url("../img/impostor.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
+}
+
+.overlay-crewmate {
+    &::before {
+        @extend %overlay;
+        background: url("../img/crewmate.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
 }
 
 .btn-close {
@@ -146,9 +214,10 @@ $card-round: 24px;
     height: $card-round;
     line-height: $card-round;
     margin: 0.25em;
-    background: white;
+    background: #efefef;
     text-align: center;
     @extend %bootstrap-border;
+    animation: .2s anim-in ease-in;
 }
 
 //.card-status {}
