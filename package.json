@@ -8,7 +8,6 @@
         "watch": "gulp watch",
         "test": "jest --detectOpenHandles",
         "lint": "eslint --ext .js,.jsx,.ts,.tsx src --ignore-pattern src/**/*.spec.ts",
-        "postinstall": "node ./node_modules/husky/lib/installer/bin install",
         "deploy": "git push origin `git subtree split --prefix dist master`:gh-pages --force"
     },
     "gulp": {

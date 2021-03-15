@@ -4,6 +4,7 @@ body {
     flex-direction: column;
     background: radial-gradient(circle, rgba(11, 26, 114, 0.6) 24%, rgba(0, 0, 0, .6) 53%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
+    color: #efefef;
 }
 
 main {
@@ -11,14 +12,11 @@ main {
 }
 
 .outer {
-    margin: 0 auto;
-    max-width: 1024px;
-    padding: 2em;
+    max-width: 900px;
 }
 
-footer {
-    padding: 16px 0;
-    text-align: center;
+footer>p {
+    margin: 0;
 }
 
 %bootstrap-border {
@@ -48,7 +46,7 @@ a {
 
 .p-text {
     margin-bottom: 0;
-    color: #efefef;
+    //color: #efefef;
 }
 
 .hidden {
@@ -73,7 +71,6 @@ a {
 */
 .round-container {
     text-align: center;
-    padding-bottom: 2em;
     position: relative;
 }
 
@@ -215,6 +212,7 @@ $overlay-opacity: .7;
     line-height: $card-round;
     margin: 0.25em;
     background: #efefef;
+    color: black;
     text-align: center;
     @extend %bootstrap-border;
     animation: .2s anim-in ease-in;
