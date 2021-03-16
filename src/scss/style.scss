@@ -5,6 +5,7 @@ body {
     background: radial-gradient(circle, rgba(11, 26, 114, 0.6) 24%, rgba(0, 0, 0, .6) 53%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
     color: #efefef;
+    // overflow: hidden;
 }
 
 main {
@@ -52,6 +53,8 @@ a {
 .hidden {
     display: none !important;
 }
+
+.invisible {}
 
 @keyframes anim-in {
 
@@ -120,7 +123,7 @@ $btn-restart-size: 32px;
 |--------------------------------------------------------------------------
 */
 $card-size: 200px;
-$card-round: 24px;
+$card-status: 24px;
 
 .card-containter {
     display: flex;
@@ -199,17 +202,17 @@ $overlay-opacity: .7;
     }
 }
 
-.card-rounds {
+.card-status-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding-bottom: 0.5em;
 }
 
-.card-round {
-    width: $card-round;
-    height: $card-round;
-    line-height: $card-round;
+.card-status {
+    width: $card-status;
+    height: $card-status;
+    line-height: $card-status;
     margin: 0.25em;
     background: #efefef;
     color: black;
@@ -218,7 +221,7 @@ $overlay-opacity: .7;
     animation: .2s anim-in ease-in;
 }
 
-//.card-status {}
+//.card-btn-container {}
 
 .btn-status {
     width: 100%;
@@ -232,5 +235,38 @@ $overlay-opacity: .7;
 
     &:last-child {
         margin-bottom: 0;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Star: https://codepen.io/Mamboleoo/pen/WNxOvjo
+|--------------------------------------------------------------------------
+*/
+star {
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    animation: star linear infinite;
+
+    @for $i from 1 through 70 {
+        &:nth-child(#{$i}) {
+            $size: random(7) + 3px;
+            width: $size;
+            height: $size;
+            animation-duration: random(30) + 15s;
+            animation-delay: random(40) - 40s;
+            top: random(101) - 1vh;
+        }
+    }
+}
+
+@keyframes star {
+    from {
+        transform: translate3d(-100%, 0, 1px);
+    }
+
+    to {
+        transform: translate3d(100vw, 0, 1px);
     }
 }
