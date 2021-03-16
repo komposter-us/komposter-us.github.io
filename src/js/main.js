@@ -3,7 +3,7 @@
 | Defines
 |--------------------------------------------------------------------------
 */
-const UPDATE_OVERLAYED_CARD_STATUS = false;
+const UPDATE_OVERLAYED_CARD_STATUS = true;
 
 // indexes in phrases[lang].statusFull & phrases[lang].statusShort
 const AliveStatus = {
@@ -88,11 +88,15 @@ function createCards() {
         card.classList.add("card");
         card.style.backgroundColor = color;
 
+        const controlContainer = document.createElement("div");
+        controlContainer.classList.add("card-control-container");
+
         const btn = document.createElement("button");
         btn.classList.add("btn-close");
         btn.addEventListener("click", closeCard);
+        controlContainer.append(btn);
 
-        card.append(btn);
+        card.append(controlContainer);
         card.append(statusContainer);
         card.append(btnContainer);
 
@@ -101,8 +105,8 @@ function createCards() {
 }
 
 function closeCard() {
-    console.log("close card", this.parentElement);
-    this.parentElement.classList.add("hidden");
+    console.log("close card", this.parentElement.parentElement);
+    this.parentElement.parentElement.classList.add("hidden");
 }
 /*
 |--------------------------------------------------------------------------
@@ -137,7 +141,7 @@ function onStatusBtnClick(cardNum, aliveStatus) {
                 setStatusContainerChildsVis(statusContainer, false);
                 updateStatusContainer(statusContainer);
             }, { once: true });
-        }, 500);
+        }, 200);
     }
 }
 
@@ -195,4 +199,3 @@ function setStatusContainerChildsVis(statusContainer, hide) {
             cardStatus.classList.remove("invisible");
     }
 }
-//

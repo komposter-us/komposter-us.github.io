@@ -1,19 +1,36 @@
+@font-face {
+    font-family: 'The name of the Font Family Here';
+    src: URL('../font/VCROSDMonoRUSbyDaymarius.ttf') format('truetype');
+}
+
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background: radial-gradient(circle, rgba(11, 26, 114, 0.6) 24%, rgba(0, 0, 0, .6) 53%), url("../img/bg.jpg") center center no-repeat fixed;
+    background: linear-gradient(90deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .5) 100%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
     color: #efefef;
+    // radial-gradient(circle, rgba(11, 26, 114, 0.6) 24%, rgba(0, 0, 0, .6) 53%) 
     // overflow: hidden;
+    // 
+    //font-family: Arial, Helvetica, sans-serif
 }
 
 main {
     flex: 1;
 }
 
+h1,
+h2 {
+    font-family: 'Amatic SC';
+}
+
+/* p {
+    font-family: "VCR OSD Mono [RUS by Daymarius]";
+} */
+
 .outer {
-    max-width: 900px;
+    max-width: 940px;
 }
 
 footer>p {
@@ -45,9 +62,18 @@ a {
     }
 }
 
-.p-text {
-    margin-bottom: 0;
-    //color: #efefef;
+p {
+    text-align: justify;
+}
+
+.text {
+    &-text {
+        margin-bottom: 0;
+    }
+
+    &-indent {
+        text-indent: 1.5em;
+    }
 }
 
 .hidden {
@@ -122,8 +148,9 @@ $btn-restart-size: 32px;
 | Card
 |--------------------------------------------------------------------------
 */
-$card-size: 200px;
-$card-status: 24px;
+$card-size: 13em;
+$card-padding: 0.4em;
+$card-status-size: 1.8em;
 
 .card-containter {
     display: flex;
@@ -134,10 +161,9 @@ $card-status: 24px;
 .card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 1.5em 0.75em 0.75em 0.75em;
     width: $card-size;
-    margin: 0.5em;
+    padding: $card-padding $card-padding $card-padding * 2 $card-padding;
+    margin: $card-padding;
     user-select: none;
     animation: .5s anim-in ease-in;
 }
@@ -188,13 +214,15 @@ $overlay-opacity: .7;
     }
 }
 
+.card-control-container {
+    // position: relative;
+    width: 100%;
+    padding-bottom: $card-padding;
+}
+
 .btn-close {
-    position: absolute;
-    top: 0.25em;
-    right: 0.25em;
-    bottom: 0;
+    float: right;
     opacity: .25;
-    // padding: 0.25em;
     box-sizing: border-box;
 
     &:focus {
@@ -206,14 +234,14 @@ $overlay-opacity: .7;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding-bottom: 0.5em;
+    padding-bottom: 0.48em;
 }
 
 .card-status {
-    width: $card-status;
-    height: $card-status;
-    line-height: $card-status;
-    margin: 0.25em;
+    width: $card-status-size;
+    height: $card-status-size;
+    line-height: $card-status-size;
+    margin: 0.12em;
     background: #efefef;
     color: black;
     text-align: center;
@@ -226,7 +254,7 @@ $overlay-opacity: .7;
 .btn-status {
     width: 100%;
     text-align: left;
-    margin-bottom: 0.25em;
+    margin-bottom: 0.24em;
     cursor: pointer;
 
     &:hover {
