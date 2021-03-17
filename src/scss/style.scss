@@ -1,13 +1,8 @@
-@font-face {
-    font-family: 'The name of the Font Family Here';
-    src: URL('../font/VCROSDMonoRUSbyDaymarius.ttf') format('truetype');
-}
-
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background: linear-gradient(90deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .5) 100%), url("../img/bg.jpg") center center no-repeat fixed;
+    background: linear-gradient(90deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .6) 100%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
     color: #efefef;
 }
@@ -20,10 +15,6 @@ h1,
 h2 {
     font-family: 'Amatic SC';
 }
-
-/* p {
-    font-family: "VCR OSD Mono [RUS by Daymarius]";
-} */
 
 .outer {
     max-width: 940px;
@@ -75,8 +66,6 @@ p {
 .hidden {
     display: none !important;
 }
-
-.invisible {}
 
 @keyframes anim-in {
 
@@ -177,7 +166,7 @@ $card-status-size: 1.8em;
     animation: .2s anim-in ease-in;
 }
 
-$overlay-opacity: .7;
+$overlay-opacity: .6;
 
 .overlay-killed {
     &::before {
