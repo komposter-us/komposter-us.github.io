@@ -3,12 +3,11 @@
 | Defines
 |--------------------------------------------------------------------------
 */
-const UPDATE_OVERLAYED_CARD_STATUS = true;
-
 // indexes in phrases[lang].statusFull & phrases[lang].statusShort
 const AliveStatus = {
-    Unknown: 0,
-    Defended: 1,
+    Empty: -1,
+    Defended: 0,
+    Unknown: 1,
     Suspect: 2,
     Crewmate: 3,
     Imposter: 4,
@@ -23,32 +22,34 @@ const Misc = {
 const g_oPhrases = {
     "ru": {
         misc: ["Раунд"],
-        statusShort: ["?", "К", "Ч", "М", "И", "У", "В"],
-        statusFull: ["Неизвестный", "Красный", "Черный", "Мирный", "Импостер", "Убит", "Выброшен"]
+        statusShort: ["К", "?", "Ч", "М", "И", "У", "В"],
+        statusFull: ["Красный", "?", "Черный", "Мирный", "Импостер", "Убит", "Выброшен"]
     },
     "en": {
         misc: ["Round"],
-        statusShort: ["?", "D", "S", "C", "I", "K", "E"],
-        statusFull: ["Unknown", "Defended", "Suspect", "Crewmate", "Impostor", "Killed", "Ejected"]
+        statusShort: ["D", "?", "S", "C", "I", "K", "E"],
+        statusFull: ["Defended", "Unknown", "Suspect", "Crewmate", "Impostor", "Killed", "Ejected"]
     }
 };
 
-const g_aCrewmateColor = ["#C51111", "#132ED1", "#117F2D", "#ED54BA", "#EF7D0E", "#F6F658", "#3F474E", "#D6E0F0", "#6B31BC", "#71491E", "#38FEDB", "#50EF39"];
+const g_aCrewmateColor = ["#132ED1", "#3F474E", "#6B31BC", "#71491E", "#C51111", "#117F2D", "#ED54BA", "#EF7D0E", "#50EF39", "#F6F658", "#38FEDB", "#D6E0F0"];
 const g_sLang = window.navigator.language.slice(0, 2) === "ru" ? "ru" : "en";
 const getCssOverlayClass = (aliveStatus) => "overlay-" + g_oPhrases.en.statusFull[aliveStatus].toLowerCase();
+const hasOverlay = (card) => card.dataset.status > AliveStatus.Suspect;
 /*
 |--------------------------------------------------------------------------
 | Round Control
 |--------------------------------------------------------------------------
 */
 let g_iRound = 1;
-
+const MAX_ROUND = 8;
 const btnRound = document.querySelector(".btn-round");
 const btnText = document.querySelector(".btn-round-num");
 const btnRoundText = document.querySelector(".btn-round-text");
 btnRoundText.textContent = g_oPhrases[g_sLang].misc[Misc.Round];
 
 btnRound.addEventListener("click", function () {
+    if (g_iRound >= MAX_ROUND) return;
     btnText.textContent = ++g_iRound;
     onRoundBtnClick();
 });
@@ -68,25 +69,56 @@ createCards();
 function createCards() {
     const cardContainter = document.querySelector(".card-containter");
 
-    for (const [i, color] of g_aCrewmateColor.entries()) {
-        const statusContainer = document.createElement("div");
-        statusContainer.classList.add("card-status-container");
-        createCardStatus(statusContainer, AliveStatus.Unknown);
-
-        const btnContainer = document.createElement("div");
-        btnContainer.classList.add("card-btn-container");
-
-        for (let aliveStatus = 0; aliveStatus < g_oPhrases[g_sLang].statusFull.length; aliveStatus++) {
-            const btn = document.createElement("button");
-            btn.classList.add("btn-status");
-            btn.append(document.createTextNode(g_oPhrases[g_sLang].statusFull[aliveStatus]));
-            btnContainer.append(btn);
-            btn.addEventListener("click", onStatusBtnClick.bind(btn, i, aliveStatus));
-        }
-
+    for (const [cardNum, color] of g_aCrewmateColor.entries()) {
         const card = document.createElement("div");
         card.classList.add("card");
         card.style.backgroundColor = color;
+        card.dataset.status = AliveStatus.Unknown;
+
+        const statusContainer = document.createElement("div");
+        statusContainer.classList.add("card-status-container", "card-container-indent");
+
+        for (let i = 0; i < MAX_ROUND; i++) {
+            createCardStatus(statusContainer, i ? AliveStatus.Empty : AliveStatus.Unknown);
+        }
+        statusContainer.firstChild.classList.add("card-status-active");
+
+        const btnContainer = document.createElement("div");
+        btnContainer.classList.add("btn-group", "card-container-indent");
+        btnContainer.setAttribute("role", "group");
+        btnContainer.setAttribute("aria-label", "Round status card " + cardNum);
+
+        const verdictContainer = document.createElement("div");
+        verdictContainer.classList.add("card-verdict-container", "card-container-indent");
+
+        for (let status = AliveStatus.Defended; status <= AliveStatus.Ejected; status++) {
+            if (status < AliveStatus.Crewmate) {
+                let elem = document.createElement("input");
+                elem.classList.add("btn-check");
+                elem.setAttribute("type", "radio");
+                elem.setAttribute("name", `btnradio-${cardNum}`);
+                elem.setAttribute("id", `radio-${cardNum}-${status}`);
+                elem.setAttribute("autocomplete", "off");
+                elem.dataset.status = status;
+                if (status === AliveStatus.Unknown)
+                    elem.setAttribute("checked", "");
+                btnContainer.append(elem);
+
+                elem = document.createElement("label");
+                elem.classList.add("btn", "btn-status");
+                elem.setAttribute("for", `radio-${cardNum}-${status}`);
+                elem.append(document.createTextNode(g_oPhrases[g_sLang].statusFull[status]));
+                // elem.dataset.status = status;
+                btnContainer.append(elem);
+                elem.addEventListener("click", onStatusBtnClick.bind(card, cardNum, status));
+            }
+            else {
+                const btn = document.createElement("button");
+                btn.classList.add("btn-verdict", "btn-" + getCssOverlayClass(status));
+                btn.addEventListener("click", onStatusBtnClick.bind(card, cardNum, status, true));
+                verdictContainer.append(btn);
+            }
+        }
 
         const controlContainer = document.createElement("div");
         controlContainer.classList.add("card-control-container");
@@ -96,9 +128,16 @@ function createCards() {
         btn.addEventListener("click", closeCard);
         controlContainer.append(btn);
 
+        const content = document.createElement("div");
+        content.classList.add("card-content-container", "card-container-indent");
+        //content.dataset.status = AliveStatus.Empty;
+
+        content.append(statusContainer);
+        content.append(btnContainer);
+        content.append(verdictContainer);
+
         card.append(controlContainer);
-        card.append(statusContainer);
-        card.append(btnContainer);
+        card.append(content);
 
         cardContainter.append(card);
     }
@@ -114,88 +153,108 @@ function closeCard() {
 |--------------------------------------------------------------------------
 */
 /** @this {HTMLButtonElement} */
-function onStatusBtnClick(cardNum, aliveStatus) {
+function onStatusBtnClick(cardNum, aliveStatus, overlay = false) {
     /** @type {HTMLDivElement} */
-    const card = this.parentElement.parentElement;
-    /** @type {HTMLDivElement} */
-    const statusContainer = card.querySelector(".card-status-container");
-    const statusNums = statusContainer.querySelectorAll("*").length;
+    const statusContainer = this.querySelector(".card-status-container");
+    /** @type {HTMLDivElement[]} */
+    const statuses = statusContainer.querySelectorAll("*");
 
-    console.log(`onStatusBtnClick > Card: ${cardNum}, status: ${aliveStatus}, statusNums: ${statusNums}`);
+    console.log(`onStatusBtnClick > Card: ${cardNum}, status: ${aliveStatus}, statusNums: ${statuses.length}`);
 
-    if (statusNums < g_iRound)
-        createCardStatus(statusContainer, aliveStatus);
-    else
-        updateCardStatus(statusContainer.lastElementChild, aliveStatus);
+    updateCardRound(statusContainer);
+    updateCardStatus(statuses[g_iRound - 1], aliveStatus);
 
-    if (aliveStatus > AliveStatus.Suspect) {
-        console.log(`onStatusBtnClick > Card: ${cardNum} add overlay`);
-        card.classList.add(getCssOverlayClass(aliveStatus));
-        card.querySelector(".btn-close").classList.add("btn-close-white");
+    if (overlay) {
+        resetCardBtn(this);
+        const content = this.querySelector(".card-content-container");
+        content.classList.add(getCssOverlayClass(aliveStatus));
 
         setTimeout(() => {
-            card.addEventListener("click", () => {
+            content.addEventListener("click", () => {
                 console.log(`onStatusBtnClick > Card: ${cardNum} Remove overlay`);
-                card.classList.remove(getCssOverlayClass(aliveStatus));
-                card.querySelector(".btn-close").classList.remove("btn-close-white");
-                setStatusContainerChildsVis(statusContainer, false);
-                updateStatusContainer(statusContainer);
+                content.classList.remove(getCssOverlayClass(aliveStatus));
+                this.dataset.status = AliveStatus.Unknown;
+                //setStatusContainerChildsVis(statusContainer, false);
+                // updateStatusContainer(statusContainer);
             }, { once: true });
         }, 200);
+    }
+    this.dataset.status = aliveStatus;
+}
+
+function updateCardsRound() {
+    /** @type {HTMLDivElement[]} */
+    const statusContainers = document.querySelector(".card-status-container");
+    statusContainers.forEach(updateCardRound);
+}
+
+/** @param {HTMLDivElement} statusContainer */
+function updateCardRound(statusContainer, aliveStatus = AliveStatus.Empty) {
+    const statuses = statusContainer.querySelectorAll("*");
+
+    for (const [i, status] of statuses.entries()) {
+        status.classList.remove("card-status-active");
+
+        if (i === g_iRound - 1) {
+            status.classList.add("card-status-active");
+            updateCardStatus(status, aliveStatus);
+        }
     }
 }
 
 /** @param {HTMLDivElement} rootElem */
-function createCardStatus(rootElem, aliveStatus, invis = false) {
+function createCardStatus(rootElem, aliveStatus) {
     const cardStatus = document.createElement("div");
     cardStatus.classList.add("card-status");
-    cardStatus.dataset.status = aliveStatus;
+    // cardStatus.dataset.status = aliveStatus;
     updateCardStatus(cardStatus, aliveStatus);
     rootElem.append(cardStatus);
-
-    if (invis)
-        cardStatus.classList.add("invisible");
 }
 
 /** @param {HTMLDivElement} cardStatus */
 function updateCardStatus(cardStatus, aliveStatus) {
-    cardStatus.innerHTML = g_oPhrases[g_sLang].statusShort[aliveStatus];
-    cardStatus.dataset.status = aliveStatus;
-    console.log("updateCardStatus >", cardStatus);
+    if (aliveStatus != AliveStatus.Empty)
+        cardStatus.innerHTML = g_oPhrases[g_sLang].statusShort[aliveStatus];
+    //cardStatus.dataset.status = aliveStatus;
+    //console.log("updateCardStatus >", cardStatus);
 }
 
 function onRoundBtnClick() {
     /** @type {HTMLDivElement[]} */
-    const statusContainers = document.querySelectorAll(".card-status-container");
-    let hasOverlay;
+    const cards = document.querySelectorAll(".card");
 
-    for (const cardStatus of statusContainers) {
-        hasOverlay = cardStatus.lastElementChild.dataset.status > AliveStatus.Suspect || cardStatus.lastElementChild.classList.contains("invisible");
+    for (const card of cards) {
+        /** @type {HTMLDivElement[]} */
+        const statusContainer = card.querySelector(".card-status-container");
+        updateCardRound(statusContainer, hasOverlay(card) ? card.dataset.status : AliveStatus.Unknown);
+    }
 
-        if (!UPDATE_OVERLAYED_CARD_STATUS && hasOverlay)
-            continue;
+    resetCardsBtn();
+}
 
-        if (cardStatus.querySelectorAll("*").length < g_iRound)
-            createCardStatus(cardStatus, AliveStatus.Unknown, UPDATE_OVERLAYED_CARD_STATUS && hasOverlay);
+/** @param {HTMLDivElement} child */
+function getCardOfChild(child) {
+    while (child && child.parentElement) {
+        if (child.parentElement.classList.contains("card"))
+            return child.parentElement;
+        child = child.parentElement;
     }
 }
 
-/** @param {HTMLDivElement} statusContainer */
-function updateStatusContainer(statusContainer) {
-    let nums = statusContainer.querySelectorAll("*").length;
-
-    while (nums++ < g_iRound)
-        createCardStatus(statusContainer, AliveStatus.Unknown);
+function resetCardsBtn() {
+    /** @type {HTMLDivElement[]} */
+    const cards = document.querySelectorAll(".card");
+    cards.forEach(resetCardBtn);
 }
 
-/** @param {HTMLDivElement} statusContainer */
-function setStatusContainerChildsVis(statusContainer, hide) {
-    const cardStatuses = statusContainer.querySelectorAll("*");
+/** @param {HTMLDivElement} card */
+function resetCardBtn(card) {
+    if (hasOverlay(card))
+        return;
 
-    for (const cardStatus of cardStatuses) {
-        if (hide)
-            cardStatus.classList.add("invisible");
-        else
-            cardStatus.classList.remove("invisible");
-    }
+    const btnsCheck = card.querySelectorAll(".btn-check");
+
+    for (const btnCheck of btnsCheck)
+        if (btnCheck.dataset.status == AliveStatus.Unknown)
+            btnCheck.click();
 }

@@ -196,7 +196,7 @@ function sassCallback(config) {
         .pipe(gulp.dest(config.outPath));
 }
 
-function jsBuild(production) {
+function jsBuild() {
     switch (pkg.gulp.js) {
         // https://stackoverflow.com/questions/41043032/browserify-parseerror-import-and-export-may-appear-only-with-sourcetype
         case JS_COMPILE_TYPE.MULTIPLE_OUT_FILES: {
@@ -217,19 +217,9 @@ function jsBuild(production) {
                 }));
         }
         case JS_COMPILE_TYPE.MERGE_FILES: {
-            if (production) {
-                return gulp.src(PATH.src.js + "**//*js")
-                    .pipe(concat("scripts.min.js"))
-                    .pipe(uglify())
-                    .pipe(gulp.dest(PATH.build.js));
-            }
-            return gulp.src(PATH.src.js)
+            return gulp.src(PATH.src.js + "**//*js")
                 .pipe(sourcemaps.init({ loadMaps: true }))
-                .pipe(concat("scripts.js"))
-                .pipe(gulp.dest(PATH.build.js))
-                .pipe(rename(function (path) {
-                    path.basename += ".min";
-                }))
+                .pipe(concat("scripts.min.js"))
                 .pipe(uglify())
                 .pipe(sourcemaps.write("./"))
                 .pipe(gulp.dest(PATH.build.js));

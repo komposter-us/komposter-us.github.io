@@ -4,7 +4,7 @@ body {
     flex-direction: column;
     background: linear-gradient(90deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .6) 100%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
-    color: #efefef;
+    color: white;
 }
 
 main {
@@ -17,23 +17,17 @@ h2 {
 }
 
 .outer {
-    max-width: 940px;
+    max-width: 1140px;
 }
 
 footer>p {
     margin: 0;
 }
 
-%bootstrap-border {
-    background-clip: border-box;
-    border: 1px solid rgba(0, 0, 0, .125);
-    border-radius: .25rem;
-}
-
-.btn-status {
-    @extend %bootstrap-border;
-    transition: 0.2s ease-in;
-    //background-color: #efefef;
+h6 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 0.25em;
 }
 
 a {
@@ -78,14 +72,32 @@ p {
     }
 }
 
+%bootstrap-border {
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, .125);
+    border-radius: .25rem;
+}
+
+%transition {
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out, opacity .15s ease-in-out;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Control
 |--------------------------------------------------------------------------
 */
+$container-bg-color: #1b1b1b;
+$border-container: 1em solid $container-bg-color;
+$border-y: 2em solid $container-bg-color;
+
 .round-container {
     text-align: center;
     position: relative;
+    background-color: #1b1b1b;
+    border: $border-container;
+    border-bottom: $border-y;
+    border-top: $border-y;
 }
 
 $btn-round-sze: 86px;
@@ -96,8 +108,9 @@ $btn-round-sze: 86px;
     height: $btn-round-sze;
     border: 6px rgb(122, 31, 40) solid;
     background-color: #dc3545;
-    color: #efefef;
-    transition: 0.2s ease-in;
+    color: white;
+    font-weight: bold;
+    @extend %transition;
 
     &:hover {
         background-color: #c82333;
@@ -105,7 +118,6 @@ $btn-round-sze: 86px;
 
     &-num {
         font-size: 2em;
-        font-weight: bold;
         line-height: 100%;
     }
 }
@@ -114,14 +126,16 @@ $btn-restart-size: 32px;
 
 .btn-restart {
     position: absolute;
+    // margin: 0 auto;
     top: 0;
+    //left: 0;
     right: 0;
     background: url("../img/update-arrows.png");
     width: $btn-restart-size;
     height: $btn-restart-size;
     opacity: .6;
     border: none;
-    transition: 0.2s ease-in;
+    @extend %transition;
 
     &:hover {
         opacity: 1;
@@ -133,153 +147,285 @@ $btn-restart-size: 32px;
 | Card
 |--------------------------------------------------------------------------
 */
-$card-size: 13em;
 $card-padding: 0.4em;
-$card-status-size: 1.8em;
+$bg-color-active: #5b5b5b;
+$font-color-active: #fff;
+$bg-color: #bfbfbf;
 
 .card-containter {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    grid-gap: 1em;
+    justify-items: center;
+    //justify-content: stretch;
+    background-color: $bg-color;
+    border: $border-container;
+    border-top: 0;
 }
 
 .card {
+    background: red;
     display: flex;
     flex-direction: column;
-    width: $card-size;
-    padding: $card-padding $card-padding $card-padding * 2 $card-padding;
-    margin: $card-padding;
     user-select: none;
     animation: .5s anim-in ease-in;
+    border: none;
+    color: black;
+    overflow: hidden;
 }
 
-%overlay {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: .25rem;
-    animation: .2s anim-in ease-in;
-}
-
-$overlay-opacity: .6;
-
-.overlay-killed {
-    &::before {
-        @extend %overlay;
-        background: url("../img/killed.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
-        /*         border: 1px red solid;
-        box-sizing: content-box;
-        background-clip: border-box; */
-    }
-}
-
-.overlay-ejected {
-    &::before {
-        @extend %overlay;
-        background: url("../img/ejected.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
-    }
-}
-
-.overlay-impostor {
-    &::before {
-        @extend %overlay;
-        background: url("../img/impostor.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
-    }
-}
-
-.overlay-crewmate {
-    &::before {
-        @extend %overlay;
-        background: url("../img/crewmate.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
-    }
-}
-
+// CONTROL
 .card-control-container {
-    // position: relative;
-    width: 100%;
-    padding-bottom: $card-padding;
+    // width: 100%;
+    padding: 0.4em;
+    z-index: 1;
 }
 
 .btn-close {
+    height: 2em;
+    width: 2em;
+    background-size: 1.2em;
     float: right;
-    opacity: .25;
     box-sizing: border-box;
+    @extend %transition;
 
     &:focus {
         box-shadow: none;
     }
 }
 
-.card-status-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding-bottom: 0.48em;
+// CONTENT
+.card-content-container {
+    background-color: white;
+    padding: 1em;
+    position: relative;
 }
 
-.card-status {
-    width: $card-status-size;
-    height: $card-status-size;
-    line-height: $card-status-size;
-    margin: 0.12em;
-    background: #efefef;
-    color: black;
-    text-align: center;
-    @extend %bootstrap-border;
-    animation: .2s anim-in ease-in;
-}
-
-//.card-btn-container {}
-
-.btn-status {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 0.24em;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #d3d3d3;
-    }
+.card-container-indent {
+    margin-bottom: 1em;
 
     &:last-child {
         margin-bottom: 0;
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| Star: https://codepen.io/Mamboleoo/pen/WNxOvjo
-|--------------------------------------------------------------------------
-*/
-star {
-    border-radius: 50%;
-    background: white;
-    position: absolute;
-    animation: star linear infinite;
+// ROUND STATUS
+$btn-status-width: 100px;
+$card-status-size: 2.375em;
 
-    @for $i from 1 through 70 {
-        &:nth-child(#{$i}) {
-            $size: random(7) + 3px;
-            width: $size;
-            height: $size;
-            animation-duration: random(30) + 15s;
-            animation-delay: random(40) - 40s;
-            top: random(101) - 1vh;
+.card-status-container {
+    display: flex;
+    width: 100%;
+    background: $bg-color;
+    border-radius: .25rem;
+}
+
+%border-sides {
+    &:first-child {
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+    }
+
+    &:last-child {
+        border-top-right-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+    }
+
+    &:not(:first-child) {
+        margin-left: -1;
+    }
+}
+
+.card-status {
+    width: $card-status-size;
+    height: $card-status-size;
+    line-height: $card-status-size;
+    color: black;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, .125);
+    animation: .2s anim-in ease-in;
+    cursor: pointer;
+    @extend %border-sides;
+}
+
+.card-status-active {
+    //background-color: $bg-color-active;
+    //color: $font-color-active;
+    position: relative;
+
+    &::before {
+        width: 100%;
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        border: 18px solid transparent;
+        border-top: 10px solid $bg-color-active;
+    }
+}
+
+// BUTTON
+.card-btn-container {}
+
+.btn-status {
+    width: $btn-status-width;
+    color: black;
+    background-color: $bg-color;
+    border: 1px solid rgba(0, 0, 0, .125);
+
+    &:hover {
+        color: $font-color-active;
+        background-color: $bg-color-active;
+        border-color: $bg-color-active;
+    }
+
+    // overwrite bootsrap props
+    .btn-check:focus+&,
+    &:focus {
+        box-shadow: none;
+        background-color: $bg-color-active;
+    }
+
+    .btn-check:checked+&,
+    .btn-check:active+&,
+    &:active,
+    &.active {
+        color: $font-color-active;
+        background-color: $bg-color-active;
+        box-shadow: none;
+        border-color: $bg-color-active;
+
+        &:focus {
+            box-shadow: none;
         }
     }
 }
 
-@keyframes star {
-    from {
-        transform: translate3d(-100%, 0, 1px);
+// STATUS
+.card-verdict-container {
+    display: flex;
+    width: 100%;
+}
+
+.btn-verdict {
+    flex-grow: 1;
+    position: relative;
+    height: $card-status-size;
+    background: $bg-color;
+    border: 1px solid rgba(0, 0, 0, .125);
+    @extend %border-sides;
+    @extend %transition;
+
+    &:hover {
+        background-color: $bg-color-active;
+    }
+}
+
+.btn-overlay-killed {
+    &:hover {
+        &::before {
+            @extend %base-overlay;
+            background-image: url("../img/killed.png");
+        }
     }
 
-    to {
-        transform: translate3d(100vw, 0, 1px);
+    &::before {
+        @extend %base-overlay;
+        background-image: url("../img/killed-w.png");
+    }
+}
+
+.btn-overlay-ejected {
+    &:hover {
+        &::before {
+            background-image: url("../img/ejected.png");
+        }
+    }
+
+    &::before {
+        @extend %base-overlay;
+        background-image: url("../img/ejected-w.png");
+    }
+}
+
+.btn-overlay-impostor {
+    &:hover {
+        &::before {
+            background-image: url("../img/impostor.png");
+        }
+    }
+
+    &::before {
+        @extend %base-overlay;
+        background-image: url("../img/impostor-w.png");
+    }
+}
+
+.btn-overlay-crewmate {
+    &:hover {
+        &::before {
+            background-image: url("../img/crewmate.png");
+        }
+    }
+
+    &::before {
+        @extend %base-overlay;
+        background-image: url("../img/crewmate-w.png");
+    }
+}
+
+%base-overlay {
+    content: "";
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+// OVERLAY
+%card-overlay {
+    animation: .2s anim-in ease-in;
+    z-index: 2;
+}
+
+$overlay-opacity: .65;
+
+.overlay-killed {
+    &::before {
+        @extend %base-overlay;
+        @extend %card-overlay;
+        background: url("../img/killed.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
+}
+
+.overlay-ejected {
+    &::before {
+        @extend %base-overlay;
+        @extend %card-overlay;
+        background: url("../img/ejected.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
+}
+
+.overlay-impostor {
+    &::before {
+        @extend %base-overlay;
+        @extend %card-overlay;
+        background: url("../img/impostor.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
+    }
+}
+
+.overlay-crewmate {
+    &::before {
+        @extend %base-overlay;
+        @extend %card-overlay;
+        background: url("../img/crewmate.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
     }
 }
