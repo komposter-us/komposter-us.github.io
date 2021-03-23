@@ -25,7 +25,7 @@ footer>p {
 }
 
 h6 {
-    font-size: 18px;
+    font-size: 1em;
     font-weight: normal;
     margin: 0;
     text-transform: uppercase;
@@ -61,8 +61,16 @@ p {
     }
 }
 
-.visible {
+.opacity-1 {
     opacity: 1;
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.hidden {
+    display: none !important;
 }
 
 @keyframes anim-in {
@@ -104,7 +112,7 @@ $border-y: 2em solid $container-bg-color;
     border-top: $border-y;
 }
 
-$btn-round-sze: 86px;
+$btn-round-sze: 90px;
 
 .btn-round {
     border-radius: 50%;
@@ -113,7 +121,8 @@ $btn-round-sze: 86px;
     border: 6px rgb(122, 31, 40) solid;
     background-color: #dc3545;
     color: white;
-    font-weight: bold;
+    //  font-weight: bold;
+    text-transform: uppercase;
     @extend %transition;
 
     &:hover {
@@ -168,7 +177,6 @@ $bg-color: #bfbfbf;
 }
 
 .card {
-    background: red;
     display: flex;
     flex-direction: column;
     user-select: none;
@@ -176,6 +184,7 @@ $bg-color: #bfbfbf;
     border: none;
     color: black;
     overflow: hidden;
+    @extend %transition;
 }
 
 // CONTROL
