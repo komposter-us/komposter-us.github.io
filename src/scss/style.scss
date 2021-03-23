@@ -27,7 +27,11 @@ footer>p {
 h6 {
     font-size: 18px;
     font-weight: normal;
-    margin-bottom: 0.25em;
+    margin: 0;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0;
+    @extend %transition;
 }
 
 a {
@@ -57,8 +61,8 @@ p {
     }
 }
 
-.hidden {
-    display: none !important;
+.visible {
+    opacity: 1;
 }
 
 @keyframes anim-in {
@@ -168,7 +172,7 @@ $bg-color: #bfbfbf;
     display: flex;
     flex-direction: column;
     user-select: none;
-    animation: .5s anim-in ease-in;
+    animation: .5s anim-in ease-in-out;
     border: none;
     color: black;
     overflow: hidden;
@@ -179,13 +183,15 @@ $bg-color: #bfbfbf;
     // width: 100%;
     padding: 0.4em;
     z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .btn-close {
     height: 2em;
     width: 2em;
     background-size: 1.2em;
-    float: right;
     box-sizing: border-box;
     @extend %transition;
 
@@ -243,7 +249,7 @@ $card-status-size: 2.375em;
     color: black;
     text-align: center;
     border: 1px solid rgba(0, 0, 0, .125);
-    animation: .2s anim-in ease-in;
+    animation: .2s anim-in ease-in-out;
     cursor: pointer;
     @extend %border-sides;
 }
@@ -273,6 +279,8 @@ $card-status-size: 2.375em;
     color: black;
     background-color: $bg-color;
     border: 1px solid rgba(0, 0, 0, .125);
+    overflow: hidden;
+    word-wrap: normal;
 
     &:hover {
         color: $font-color-active;
@@ -392,7 +400,7 @@ $card-status-size: 2.375em;
 
 // OVERLAY
 %card-overlay {
-    animation: .2s anim-in ease-in;
+    animation: .2s anim-in ease-in-out;
     z-index: 2;
 }
 

@@ -16,17 +16,19 @@ const AliveStatus = {
 };
 // indexes in phrases[lang].misc
 const Misc = {
-    Round: 0
+    Round: 0,
+    Result: 1,
+    Status: 2
 };
 
 const g_oPhrases = {
     "ru": {
-        misc: ["Раунд"],
-        statusShort: ["К", "?", "Ч", "М", "И", "У", "В"],
-        statusFull: ["Красный", "?", "Черный", "Мирный", "Импостер", "Убит", "Выброшен"]
+        misc: ["Раунд", "Итог раунда", "Статус"],
+        statusShort: ["Н", "?", "П", "М", "И", "У", "В"],
+        statusFull: ["Надежн.", "?", "Подозр.", "Мирный", "Импостер", "Убит", "Выброшен"]
     },
     "en": {
-        misc: ["Round"],
+        misc: ["Round", "Round result", "Status"],
         statusShort: ["D", "?", "S", "C", "I", "K", "E"],
         statusFull: ["Defended", "Unknown", "Suspect", "Crewmate", "Impostor", "Killed", "Ejected"]
     }
@@ -91,9 +93,18 @@ function createCards() {
         const verdictContainer = document.createElement("div");
         verdictContainer.classList.add("card-verdict-container", "card-container-indent");
 
+        const text = document.createElement("h6");
+
         for (let status = AliveStatus.Defended; status <= AliveStatus.Ejected; status++) {
-            if (status < AliveStatus.Crewmate) {
-                let elem = document.createElement("input");
+            let elem;
+            const bStatus = status > AliveStatus.Suspect;
+            if (bStatus) {
+                elem = document.createElement("button");
+                elem.classList.add("btn-verdict", "btn-" + getCssOverlayClass(status));
+                verdictContainer.append(elem);
+            }
+            else {
+                elem = document.createElement("input");
                 elem.classList.add("btn-check");
                 elem.setAttribute("type", "radio");
                 elem.setAttribute("name", `btnradio-${cardNum}`);
@@ -110,18 +121,16 @@ function createCards() {
                 elem.append(document.createTextNode(g_oPhrases[g_sLang].statusFull[status]));
                 // elem.dataset.status = status;
                 btnContainer.append(elem);
-                elem.addEventListener("click", onStatusBtnClick.bind(card, cardNum, status));
             }
-            else {
-                const btn = document.createElement("button");
-                btn.classList.add("btn-verdict", "btn-" + getCssOverlayClass(status));
-                btn.addEventListener("click", onStatusBtnClick.bind(card, cardNum, status, true));
-                verdictContainer.append(btn);
-            }
+            elem.addEventListener("click", onStatusBtnClick.bind(card, cardNum, status, bStatus));
+            elem.addEventListener("mouseenter", onMouseEnter.bind(text, status, bStatus));
+            elem.addEventListener("mouseout", onMouseOver.bind(text));
         }
 
         const controlContainer = document.createElement("div");
         controlContainer.classList.add("card-control-container");
+
+        controlContainer.append(text);
 
         const btn = document.createElement("button");
         btn.classList.add("btn-close");
@@ -153,7 +162,7 @@ function closeCard() {
 |--------------------------------------------------------------------------
 */
 /** @this {HTMLButtonElement} */
-function onStatusBtnClick(cardNum, aliveStatus, overlay = false) {
+function onStatusBtnClick(cardNum, aliveStatus, bStatus = false) {
     /** @type {HTMLDivElement} */
     const statusContainer = this.querySelector(".card-status-container");
     /** @type {HTMLDivElement[]} */
@@ -164,7 +173,7 @@ function onStatusBtnClick(cardNum, aliveStatus, overlay = false) {
     updateCardRound(statusContainer);
     updateCardStatus(statuses[g_iRound - 1], aliveStatus);
 
-    if (overlay) {
+    if (bStatus) {
         resetCardBtn(this);
         const content = this.querySelector(".card-content-container");
         content.classList.add(getCssOverlayClass(aliveStatus));
@@ -180,6 +189,18 @@ function onStatusBtnClick(cardNum, aliveStatus, overlay = false) {
         }, 200);
     }
     this.dataset.status = aliveStatus;
+}
+
+/** @this {HTMLButtonElement} */
+function onMouseEnter(aliveStatus, bStatus = false) {
+    this.innerHTML = g_oPhrases[g_sLang].misc[bStatus ? Misc.Status : Misc.Result] + ": " + g_oPhrases[g_sLang].statusFull[aliveStatus];
+    this.classList.add("visible");
+}
+
+/** @this {HTMLButtonElement} */
+function onMouseOver() {
+    // this.innerHTML = "";
+    this.classList.remove("visible");
 }
 
 function updateCardsRound() {
