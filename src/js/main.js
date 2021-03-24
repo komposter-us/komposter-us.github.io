@@ -78,7 +78,10 @@ function createCards() {
         card.style.backgroundColor = color;
         card.dataset.status = AliveStatus.Unknown;
         card.dataset.round = 0;
+
         const text = document.createElement("h6");
+        if (cardNum > 5)
+            text.style.color = "#000";
 
         const statusContainer = document.createElement("div");
         statusContainer.classList.add("card-status-container", "card-container-indent");
