@@ -339,6 +339,7 @@ $card-status-size: 2.375em;
     }
 }
 
+/* uncss:ignore start */
 .btn-overlay-killed {
     &:hover {
         &::before {
@@ -446,3 +447,5 @@ $overlay-opacity: .65;
         background: url("../img/crewmate.png") center center no-repeat, rgba(0, 0, 0, $overlay-opacity);
     }
 }
+
+/* uncss:ignore */
