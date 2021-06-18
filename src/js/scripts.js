@@ -36,7 +36,7 @@ const g_oPhrases = {
     }
 };
 
-const g_aCrewmateColor = ["#132ED1", "#3F474E", "#6B31BC", "#71491E", "#C51111", "#117F2D", "#ED54BA", "#EF7D0E", "#50EF39", "#F6F658", "#38FEDB", "#D6E0F0"];
+const g_aCrewmateColor = ["#731B13", "#132ED1", "#3F474E", "#6B31BC", "#71491E", "#C51111", "#117F2D", "#ED54BA", "#EF7D0E", "#EC7578", "#708497", "#50EF39", "#928776", "#F6F658", "#38FEDB", "#ECC0D3", "#FFFDBE", "#D6E0F0"];
 const g_sLang = window.navigator.language.slice(0, 2) === "ru" ? "ru" : "en";
 const getCssOverlayClass = (aliveStatus) => "overlay-" + g_oPhrases.en.status[aliveStatus].toLowerCase();
 const getFullPhrase = (aliveStatus) => g_oPhrases[g_sLang].statusFull[aliveStatus] ? g_oPhrases[g_sLang].statusFull[aliveStatus] : g_oPhrases[g_sLang].status[aliveStatus];
@@ -71,8 +71,10 @@ createCards();
 
 function createCards() {
     const cardContainter = document.querySelector(".card-containter");
+    const colorContainter = document.querySelector(".color-container");
 
     for (const [cardNum, color] of g_aCrewmateColor.entries()) {
+        // cards
         const card = document.createElement("div");
         card.classList.add("card");
         card.style.backgroundColor = color;
@@ -80,7 +82,7 @@ function createCards() {
         card.dataset.round = 0;
 
         const text = document.createElement("h6");
-        if (cardNum > 5)
+        if (cardNum > 6)
             text.style.color = "#000";
 
         const statusContainer = document.createElement("div");
@@ -142,9 +144,18 @@ function createCards() {
 
         controlContainer.append(text);
 
+        // color control
+        const colorClose = document.createElement("div");
+        colorClose.classList.add("color-close");
+        colorClose.style.backgroundColor = color;
+        colorContainter.append(colorClose);
+        colorClose.addEventListener("click", onCloseBtnClick.bind(card));
+        colorClose.addEventListener("click", onColorClose);
+
         const btn = document.createElement("button");
         btn.classList.add("btn-close");
         btn.addEventListener("click", onCloseBtnClick.bind(card));
+        btn.addEventListener("click", onColorClose.bind(colorClose));
         controlContainer.append(btn);
 
         const content = document.createElement("div");
@@ -160,6 +171,11 @@ function createCards() {
         cardContainter.append(card);
         g_aCards.push(card);
     }
+}
+
+/** @this {HTMLDivElement} */
+function onColorClose() {
+    this.classList.add("color-closed");
 }
 
 function onRoundBtnClick() {
@@ -200,15 +216,14 @@ function onStatusBtnClick(cardNum, aliveStatus, bStatus = false) {
         uncheckedCardRadio(this);
         const content = this.querySelector(".card-content-container");
         content.classList.add(getCssOverlayClass(aliveStatus));
-        const that = this;
 
         setTimeout(() => {
             content.addEventListener("click", () => {
                 console.log(`onStatusBtnClick > Card: ${cardNum} Remove overlay`);
                 content.classList.remove(getCssOverlayClass(aliveStatus));
                 this.dataset.status = AliveStatus.Unknown;
-                resetCardRadio(that);
-                updateCardRound(that, AliveStatus.Unknown);
+                resetCardRadio(this);
+                updateCardRound(this, AliveStatus.Unknown);
             }, { once: true });
         }, 200);
     }

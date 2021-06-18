@@ -1,8 +1,12 @@
+html {
+    font-size: 18px;
+}
+
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background: linear-gradient(90deg, rgba(0, 0, 0, .6) 0%, rgba(0, 0, 0, .6) 100%), url("../img/bg.jpg") center center no-repeat fixed;
+    background: linear-gradient(90deg, rgba(0, 0, 0, .75) 0%, rgba(0, 0, 0, .75) 100%), url("../img/bg.jpg") center center no-repeat fixed;
     background-size: cover, cover;
     color: white;
 }
@@ -13,7 +17,7 @@ main {
 
 h1,
 h2 {
-    font-family: 'Amatic SC';
+    // font-family: 'Amatic SC';
 }
 
 .outer {
@@ -24,8 +28,17 @@ footer>p {
     margin: 0;
 }
 
+// Vars
+$border-radius: 4px;
+$card-font-size: 17px;
+$bg-color-active: #5b5b5b;
+$font-color-active: #fff;
+$bg-color: #bfbfbf;
+$bg-color-container: #fff;
+$bg-color-round: #dc3545;
+
 h6 {
-    font-size: 1em;
+    font-size: $card-font-size;
     font-weight: normal;
     margin: 0;
     text-transform: uppercase;
@@ -47,18 +60,74 @@ a {
     }
 }
 
-p {
-    text-align: justify;
+.span {
+    border-radius: $border-radius;
+    padding: 0 0.2rem;
+
+    &--a {
+        background-color: $font-color-active;
+        color: black;
+    }
+
+    &--b {
+        background-color: $bg-color-round;
+        color: white;
+    }
 }
 
 .text {
-    &-text {
-        margin-bottom: 0;
+    &-indent {
+        text-indent: 1rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
-    &-indent {
-        text-indent: 1.5em;
+    &-bold {
+        font-weight: bold;
     }
+}
+
+// UL
+.list-counter-square {
+    list-style: none;
+    counter-reset: list;
+    margin: 0;
+    // padding: 0;
+    overflow: hidden;
+}
+
+.list-counter-square>ol {
+    position: relative;
+    display: block;
+    height: 2rem;
+    line-height: 2rem;
+    margin-left: 2rem;
+    margin-bottom: .6rem;
+    padding-left: .8rem;
+    padding-right: .5rem;
+    // background: rgb(27, 27, 27);
+    white-space: nowrap;
+}
+
+.list-counter-square>ol:last-child {
+    margin-bottom: 1rem;
+}
+
+.list-counter-square>ol::before {
+    content: counter(list);
+    counter-increment: list;
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    bottom: 0;
+    width: 2rem;
+    height: 2rem;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 50%;
+    box-sizing: content-box;
 }
 
 .opacity-1 {
@@ -87,7 +156,7 @@ p {
 %bootstrap-border {
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, .125);
-    border-radius: .25rem;
+    border-radius: $border-radius;
 }
 
 %transition {
@@ -100,8 +169,8 @@ p {
 |--------------------------------------------------------------------------
 */
 $container-bg-color: #1b1b1b;
-$border-container: 1em solid $container-bg-color;
-$border-y: 2em solid $container-bg-color;
+$border-container: 16px solid $container-bg-color;
+$border-y: 32px solid $container-bg-color;
 
 .round-container {
     text-align: center;
@@ -112,16 +181,19 @@ $border-y: 2em solid $container-bg-color;
     border-top: $border-y;
 }
 
-$btn-round-sze: 90px;
+$btn-round-sze: 100px;
 
 .btn-round {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
     border-radius: 50%;
     width: $btn-round-sze;
     height: $btn-round-sze;
     border: 6px rgb(122, 31, 40) solid;
-    background-color: #dc3545;
+    background-color: $bg-color-round;
     color: white;
-    //  font-weight: bold;
     text-transform: uppercase;
     @extend %transition;
 
@@ -130,7 +202,7 @@ $btn-round-sze: 90px;
     }
 
     &-num {
-        font-size: 2em;
+        font-size: 1.8rem;
         line-height: 100%;
     }
 }
@@ -160,17 +232,11 @@ $btn-restart-size: 32px;
 | Card
 |--------------------------------------------------------------------------
 */
-$card-padding: 0.4em;
-$bg-color-active: #5b5b5b;
-$font-color-active: #fff;
-$bg-color: #bfbfbf;
-
 .card-containter {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-    grid-gap: 1em;
+    grid-gap: 16px;
     justify-items: center;
-    //justify-content: stretch;
     background-color: $bg-color;
     border: $border-container;
     border-top: 0;
@@ -189,8 +255,7 @@ $bg-color: #bfbfbf;
 
 // CONTROL
 .card-control-container {
-    // width: 100%;
-    padding: 0.4em;
+    padding: 6px;
     z-index: 1;
     display: inline-flex;
     align-items: center;
@@ -198,9 +263,9 @@ $bg-color: #bfbfbf;
 }
 
 .btn-close {
-    height: 2em;
-    width: 2em;
-    background-size: 1.2em;
+    height: 32px;
+    width: 32px;
+    background-size: 20px;
     box-sizing: border-box;
     @extend %transition;
 
@@ -211,13 +276,13 @@ $bg-color: #bfbfbf;
 
 // CONTENT
 .card-content-container {
-    background-color: white;
-    padding: 1em;
+    background-color: $bg-color-container;
+    padding: 16px;
     position: relative;
 }
 
 .card-container-indent {
-    margin-bottom: 1em;
+    margin-bottom: 16px;
 
     &:last-child {
         margin-bottom: 0;
@@ -225,25 +290,25 @@ $bg-color: #bfbfbf;
 }
 
 // ROUND STATUS
-$btn-status-width: 100px;
-$card-status-size: 2.375em;
+$btn-status-width: 102px;
+$card-status-size: 38px;
 
 .card-status-container {
     display: flex;
     width: 100%;
     background: $bg-color;
-    border-radius: .25rem;
+    border-radius: $border-radius;
 }
 
 %border-sides {
     &:first-child {
-        border-top-left-radius: .25rem;
-        border-bottom-left-radius: .25rem;
+        border-top-left-radius: $border-radius;
+        border-bottom-left-radius: $border-radius;
     }
 
     &:last-child {
-        border-top-right-radius: .25rem;
-        border-bottom-right-radius: .25rem;
+        border-top-right-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
     }
 
     &:not(:first-child) {
@@ -252,11 +317,13 @@ $card-status-size: 2.375em;
 }
 
 .card-status {
+    font-size: $card-font-size !important;
+    color: #212121;
+    font-weight: bold;
+    text-align: center;
     width: $card-status-size;
     height: $card-status-size;
     line-height: $card-status-size;
-    color: black;
-    text-align: center;
     border: 1px solid rgba(0, 0, 0, .125);
     animation: .2s anim-in ease-in-out;
     cursor: pointer;
@@ -264,8 +331,6 @@ $card-status-size: 2.375em;
 }
 
 .card-status-active {
-    //background-color: $bg-color-active;
-    //color: $font-color-active;
     position: relative;
 
     &::before {
@@ -285,7 +350,9 @@ $card-status-size: 2.375em;
 
 .btn-status {
     width: $btn-status-width;
+    height: $card-status-size;
     color: black;
+    font-size: $card-font-size !important;
     background-color: $bg-color;
     border: 1px solid rgba(0, 0, 0, .125);
     overflow: hidden;
@@ -448,4 +515,67 @@ $overlay-opacity: .65;
     }
 }
 
+.overlay-close {
+    &::before {
+        @extend %base-overlay;
+        @extend %card-overlay;
+        background: rgba(0, 0, 0, .65) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    }
+}
+
 /* uncss:ignore */
+
+// COLOR PANELE
+$color-close-width: 44px;
+
+.color-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: $color-close-width*6;
+}
+
+.color-close {
+    width: $color-close-width;
+    height: $color-close-width;
+    position: relative;
+
+    &:hover {
+        &::before {
+            @extend %color-close;
+        }
+    }
+
+    &::before {
+        cursor: pointer;
+        opacity: $overlay-opacity;
+        animation: .2s anim-in-close ease-in-out;
+    }
+}
+
+@keyframes anim-in-close {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: $overlay-opacity;
+    }
+}
+
+%color-close {
+    @extend %base-overlay;
+    background-size: contain !important;
+    border: 6px solid transparent;
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+    background-color: rgba(0, 0, 0, .125);
+}
+
+.color-closed {
+    &::before {
+        @extend %color-close;
+        cursor: initial;
+        opacity: .9;
+        animation: none;
+    }
+}

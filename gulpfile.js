@@ -1,5 +1,5 @@
 const gulp = require("gulp");
-const del = require("del"); // для удаления файлов/папок
+const rimraf = require("rimraf"); // для удаления файлов/папок
 let sass = require("gulp-sass");
 sass.compiler = require("node-sass");
 const browserSync = require("browser-sync").create();
@@ -62,7 +62,12 @@ gulp.task("build:html", () => {
 });
 
 gulp.task("clean", () => {
-    return del([cfg.gulp.build.root]);
+    return new Promise((resolve, reject) => {
+        rimraf(cfg.gulp.build.root, (err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
 });
 
 gulp.task("build", gulp.series(["clean", "build:css", "build:js", "build:img", "build:html", "build:font"]));
@@ -75,6 +80,14 @@ gulp.task("browserSync", gulp.series((done) => {
         // notify: false
     });
     done();
+}));
+
+gulp.task("watch-nosync", gulp.series(["build"], () => {
+    gulp.watch(cfg.gulp.src.css, gulp.series(["build:css"]));
+    gulp.watch(cfg.gulp.src.js, gulp.series(["build:js"]));
+    gulp.watch(cfg.gulp.src.img, gulp.series(["build:img"]));
+    gulp.watch(cfg.gulp.src.html, gulp.series(["build:html"]));
+    gulp.watch(cfg.gulp.src.html, gulp.series(["build:font"]));
 }));
 
 gulp.task("watch", gulp.series(["build", "browserSync"], () => {
@@ -99,7 +112,7 @@ function cssBuild(production) {
         uncssIgnore = getJsSelectors();
         console.log("Uncss ignore", uncssIgnore);
     }
-    const src = cfg.gulp.src.css + (cfg.gulp.css.sass.enable ? "**/*.{scss,css}" : "**/*.css");
+    const src = cfg.gulp.src.css + (cfg.gulp.css.sass.enable ? "/*.{scss,css}" : "/*.css");
     // Файлы считываются рекурсивно в root директории scss. На выходе получается один файл стилей
     if (cfg.gulp.css.merge) {
         return cssCallback({
@@ -169,7 +182,7 @@ function cssCallback(config) {
 // TODO: make browserify as config option
 function jsBuild() {
     if (cfg.gulp.js.merge) {
-        let stream = gulp.src(cfg.gulp.src.js + "**//*.js").pipe(concat(cfg.gulp.js.mergeName + (cfg.gulp.js.uglify.enable ? ".min.js" : ".js")));
+        let stream = gulp.src(cfg.gulp.src.js + "/*.js").pipe(concat(cfg.gulp.js.mergeName + (cfg.gulp.js.uglify.enable ? ".min.js" : ".js")));
 
         if (cfg.gulp.js.sourcemaps)
             stream = stream.pipe(sourcemaps.init({ loadMaps: true }));
@@ -184,8 +197,9 @@ function jsBuild() {
     }
     else {
         // https://stackoverflow.com/questions/41043032/browserify-parseerror-import-and-export-may-appear-only-with-sourcetype
-        const files = glob.sync(cfg.gulp.src.js + "**//*.js");
+        const files = glob.sync(cfg.gulp.src.js + "/*.js");
         return merge(files.map(file => {
+            // /\.min\./.test(file) ? path.basename(file) : 
             let stream = browserify({
                 entries: [file],
                 debug: true
@@ -210,31 +224,34 @@ function jsBuild() {
 // uncss
 function getJsSelectors() {
     const selectors = [];
-    const files = glob.sync(cfg.gulp.src.js + "**/*.js");
-    // eslint-disable-next-line unicorn/no-array-for-each
-    files.forEach(f => {
-        if (/.js$/.test(f)) {
-            const script = fs.readFileSync(f, "utf8");
-            const regexClass = script.match(/classList\.add\((["'].*["'])/gm);
+    const files = glob.sync(cfg.gulp.src.js + "/**/*.js");
 
-            for (const str of regexClass) {
-                const match = str.match(/classList\.add\((["'].*["'])/);
+    for (const file of files) {
+        const script = fs.readFileSync(file, "utf8");
+        const regexClass = script.match(/classList\.add\(([^)]*)\)/gm);
 
-                if (match && match[1])
-                    selectors.push(...match[1].replace(/["']+/g, "").split(",").map(s => "." + s.trim()));
+        if (regexClass) {
+            for (let str of regexClass) {
+                str = str.replace(/classList\.add\(|\)/g, "").split(",");
+
+                for (const s of str)
+                    if (/"|'|^\+/g.test(s) && !s.includes("+"))
+                        selectors.push(s.replace(/"|'/g, "").trim());
             }
+        }
 
-            const regexElem = script.match(/createElement\((["'].*["'])/gm);
+        const regexElem = script.match(/createElement\((["'][\w|-]*["'])\)/gm);
 
+        if (regexElem) {
             for (const str of regexElem) {
-                const match = str.match(/createElement\((["'].*["'])/);
+                const match = str.match(/createElement\((["'][\w|-]*["'])\)/);
 
                 if (match && match[1])
                     selectors.push(match[1].replace(/["']+/g, ""));
             }
         }
-    });
-    if (cfg.gulp.css.uncss.ignore)
-        selectors.push(...cfg.gulp.css.uncss.ignore);
+    }
+    if (cfg.gulp.css.uncss.enable)
+        selectors.push(...cfg.gulp.css.uncss.opts.ignore);
     return [...new Set(selectors)];
 }
