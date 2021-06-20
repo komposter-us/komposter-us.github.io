@@ -1,6 +1,6 @@
 {
     "name": "komposter-io",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Komposter-io website",
     "scripts": {
         "build": "gulp build",
@@ -131,5 +131,7 @@
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@shopify/draggable": "^1.0.0-beta.8"
+    }
 }

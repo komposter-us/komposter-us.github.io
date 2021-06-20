@@ -574,7 +574,7 @@ $color-close-width: 44px;
 .color-closed {
     &::before {
         @extend %color-close;
-        cursor: initial;
+        // cursor: initial;
         opacity: .9;
         animation: none;
     }
